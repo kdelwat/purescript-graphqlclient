@@ -1,18 +1,15 @@
 { name = "graphqlclient"
 , dependencies =
-  [ "affjax"
-  , "effect"
-  , "prelude"
-  , "psci-support"
-  , "record"
-  , "argonaut-core"
+  [ "aff"
+  , "affjax"
   , "argonaut-codecs"
+  , "argonaut-core"
   , "argonaut-generic"
-  , "aff"
   , "arrays"
   , "bifunctors"
   , "control"
   , "datetime"
+  , "effect"
   , "either"
   , "foldable-traversable"
   , "foreign-object"
@@ -21,13 +18,17 @@
   , "lists"
   , "maybe"
   , "newtype"
+  , "numbers"
+  , "prelude"
+  , "psci-support"
+  , "record"
   , "strings"
   , "transformers"
   , "tuples"
   ]
-  -- , "debug"
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
 , license = "Apache-2.0"
-, repository = "https://github.com/purescript-graphqlclient/purescript-graphqlclient"
+, repository =
+    "https://github.com/purescript-graphqlclient/purescript-graphqlclient"
 }

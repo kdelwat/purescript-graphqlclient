@@ -6,6 +6,7 @@ import Data.Int as Int
 import Data.Maybe (Maybe(..), maybe)
 import Data.String as String
 import Data.Tuple (Tuple(..))
+import Data.Number.Format (toStringWith, fixed)
 import GraphQLClient.Argument (Argument(..), ArgumentValue(..), Optional(..))
 import GraphQLClient.Cyrb53 (cyrb53)
 
@@ -17,27 +18,26 @@ filterAbsent = Array.mapMaybe go
     OptionalArgument n (Present v) -> Just (Tuple n v)
     OptionalArgument _ Absent -> Nothing
 
-type Cache
-  = -- | the string representation of `args :: Array Argument`
-    -- |
-    -- | e.g.
-    -- |
-    -- | ```purs
-    -- | args = [ RequiredArgument "yyy" (ArgumentValueBoolean true) ] -- should be non-empty, because `Maybe Cache`
-    -- |
-    -- | argsWritten = writeGraphQLArguments args
-    -- |
-    -- | -- will return
-    -- |
-    -- | argsWritten = "(yyy: true)"
-    -- | ```
-    -- |
-    -- | NOTE: we DO NOT KEEP the args after they were converted to the string representation
-    -- | because I didn't fine a place where to use them
-    { argsWritten :: String
-    -- | a hash from argsWritten arg, used to be added to field names
-    , hash :: String
-    }
+type Cache = -- | the string representation of `args :: Array Argument`
+  -- |
+  -- | e.g.
+  -- |
+  -- | ```purs
+  -- | args = [ RequiredArgument "yyy" (ArgumentValueBoolean true) ] -- should be non-empty, because `Maybe Cache`
+  -- |
+  -- | argsWritten = writeGraphQLArguments args
+  -- |
+  -- | -- will return
+  -- |
+  -- | argsWritten = "(yyy: true)"
+  -- | ```
+  -- |
+  -- | NOTE: we DO NOT KEEP the args after they were converted to the string representation
+  -- | because I didn't fine a place where to use them
+  { argsWritten :: String
+  -- | a hash from argsWritten arg, used to be added to field names
+  , hash :: String
+  }
 
 argsHash :: Array Argument -> Maybe Cache
 argsHash args = case filterAbsent args of
@@ -69,6 +69,7 @@ writeGraphQLArgumentsArgumentValue = case _ of
   ArgumentValueString s -> "\"" <> s <> "\""
   ArgumentValueEnum s -> s
   ArgumentValueInt i -> Int.toStringAs Int.decimal i
+  ArgumentValueFloat f -> toStringWith (fixed 4) f
   ArgumentValueBoolean b -> if b then "true" else "false"
   ArgumentValueMaybe maybeArg -> maybe "null" writeGraphQLArgumentsArgumentValue maybeArg
   ArgumentValueArray [] -> "[]"

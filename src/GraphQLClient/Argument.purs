@@ -13,6 +13,7 @@ data ArgumentValue
   = ArgumentValueString String
   | ArgumentValueEnum String
   | ArgumentValueInt Int
+  | ArgumentValueFloat Number
   | ArgumentValueBoolean Boolean
   | ArgumentValueMaybe (Maybe ArgumentValue)
   | ArgumentValueArray (Array ArgumentValue)
@@ -35,6 +36,9 @@ instance toGraphQLArgumentValueString :: ToGraphQLArgumentValue String where
 instance toGraphQLArgumentValueInt :: ToGraphQLArgumentValue Int where
   toGraphQLArgumentValue = ArgumentValueInt
 
+instance toGraphQLArgumentValueFloat :: ToGraphQLArgumentValue Number where
+  toGraphQLArgumentValue = ArgumentValueFloat
+
 instance toGraphQLArgumentValueBoolean :: ToGraphQLArgumentValue Boolean where
   toGraphQLArgumentValue = ArgumentValueBoolean
 
@@ -50,12 +54,12 @@ instance toGraphQLArgumentValueNested :: ToGraphQLArgumentValue a => ToGraphQLAr
 -- | else instance toGraphQLArgumentValueNewtype :: (Newtype a b, ToGraphQLArgumentValue b) => ToGraphQLArgumentValue a where
 -- |   toGraphQLArgumentValue = toGraphQLArgumentValue <<< unwrap
 
-toGraphQLArguments ::
-  ∀ row list.
-  RowList.RowToList row list =>
-  ToGraphQLArgumentImplementationRecord list row =>
-  (Record row) ->
-  Array Argument
+toGraphQLArguments
+  :: ∀ row list
+   . RowList.RowToList row list
+  => ToGraphQLArgumentImplementationRecord list row
+  => (Record row)
+  -> Array Argument
 toGraphQLArguments rec = toGraphQLArgumentImplementationRecord (RLProxy :: RLProxy list) rec
 
 -------------------------------------------------------
